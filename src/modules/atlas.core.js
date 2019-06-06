@@ -535,8 +535,8 @@ let component = function (self , data , component ) {
     if(component.length > 0)
     {
         component.map(e => {
-            let p = e.split('=')[0];
-            let value = e.split('=')[1];
+            let p = e.split('=')[0].trim();
+            let value = e.split('=')[1].trim();
             let prefix = `{{${p}}}`;
 
             data = data.replace(prefix , value);

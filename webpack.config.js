@@ -7,7 +7,7 @@ module.exports = {
     } , 
     output : {
         path: path.resolve(__dirname , './src/'),
-        filename: 'atlas.build.js',
+        filename: 'atlas.build.min.js',
     },
     module : {
         rules: [
