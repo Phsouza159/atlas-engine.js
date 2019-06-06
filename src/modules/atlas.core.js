@@ -555,29 +555,31 @@ let getPartial = function (value, element) {
     let name = value;
     let component = element.dataset.component;
     let insertChild = element.dataset.insertchild;
-    let data = self.partialViews.views[name];
+    let partial = document.createElement('div');
 
-    if (data == null) {
+    if (self.partialViews.views[name] == null) {
         return console.warn(`partial view : ${name} não encontrada.`);
     }
+
+    partial.innerHTML = self.partialViews.views[name].innerHTML;
 
     if(component != null)
     {
         component = component.split(';');
 
-        data.innerHTML = self.core.component(self , data.innerHTML , component);
+        partial.innerHTML = self.core.component(self , partial.innerHTML , component);
     }
 
     if(insertChild == null || insertChild == 'bottom')
     {
-        element.appendChild(data);
+        element.appendChild(partial);
     }
     else if(insertChild == 'top'){
-        element.insertBefore( data , element.firstChild );
+        element.insertBefore( partial , element.firstChild );
     }
     else{
         console.warn(`insertChild: ${insertChild}, não reconhecido`);
-        element.appendChild(data);
+        element.appendChild(partial);
     }
 }
 /**
