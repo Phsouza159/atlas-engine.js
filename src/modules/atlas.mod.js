@@ -207,6 +207,8 @@ let get = function (value, element) {
     let callback = globalThis[ob.callback];
     let varResponse = ob.var == null ? '$getResponse' : ob.var;
 
+    ob.url = self.core.formatarLink( self , ob.url );
+
     self.sys.OnGet(ob.url)
         .then((data) => {
 

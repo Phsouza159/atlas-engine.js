@@ -17,11 +17,18 @@ import * as sys from './modules/atlas.sys';
 import * as mod from './modules/atlas.mod';
 
 (function () {
+
+    let cahceAtlas ;
+
     /**
      * Construtor
      * @param {object} args 
      */
     function AtlasCtor(args) {
+
+        if(AtlasApp != null)
+            AtlasApp = cahceAtlas;
+
         try{
             AtlasApp = new AtlasApp(args);
 
@@ -31,7 +38,7 @@ import * as mod from './modules/atlas.mod';
 
         }catch(e)
         {
-            new AtlasApp().sys.pagErroCodView(500 , `<b>Erro interno no servidor</b><p>Mensagem: ${e} </p>`);
+            new AtlasApp().sys.pagErroCodView(503 , `<b>Erro interno</b><p>Mensagem: ${e} </p>`);
         }
     };
 
@@ -118,6 +125,22 @@ import * as mod from './modules/atlas.mod';
         // element.appendChild(p);
     }
 
+    let listObjetoDestruir = [
+        () => document.getElementById('style-atlas'),
+        () => document.getElementById('atlas-load-body'),
+    ]
+
+    AtlasApp.prototype.destroir = () => {
+        listObjetoDestruir.map( item => {
+            let e = item();
+            if(e != null){
+               let parent = e.parentNode;
+                
+               parent.removeChild(e);
+            }
+        });
+    }
+
     AtlasApp.prototype.start                    = start;
     AtlasApp.prototype.mod                      = {};
     AtlasApp.prototype.mod.for                  = mod.lacoFor;
@@ -149,6 +172,7 @@ import * as mod from './modules/atlas.mod';
     AtlasApp.prototype.core.component           = core.component;
     AtlasApp.prototype.core.addCache            = core.addCache;
     AtlasApp.prototype.core.execultCache        = core.execultCache;
+    AtlasApp.prototype.core.formatarLink        = core.formatarLink;
 
     AtlasApp.prototype.sys                      = function() {};
     AtlasApp.prototype.sys.cache                = [];
@@ -163,6 +187,8 @@ import * as mod from './modules/atlas.mod';
     AtlasApp.prototype.sys.queryParametres.function = sys.queryParametresfunction;
     AtlasApp.prototype.sys.queryParametres.validarText = sys.queryParametresvalidarText;
     
+    cahceAtlas = AtlasApp;
+
     window.AtlasApp = AtlasApp;
     window.AtlasCtor = AtlasCtor;
 

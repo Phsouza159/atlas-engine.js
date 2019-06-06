@@ -324,6 +324,7 @@ let onloadRout = async function () {
                 r = self.sys.apiQuery()
             }catch(e){
                 console.warn(e);
+                self.sys.pagErroCodView(503 , `<b>Erro interno</b><p>Mensagem: ${e} </p>`);
                 r = false;
             }
         };
@@ -535,8 +536,12 @@ let component = function (self , data , component ) {
     if(component.length > 0)
     {
         component.map(e => {
-            let p = e.split('=>')[0].trim();
-            let value = e.split('=>')[1].trim();
+            let arr = e.split('=>');
+            
+            if(arr.length <= 1) throw `data-component inválido : ${e} . esperado um '=>'`;
+
+            let p = arr[0].trim();
+            let value = arr[1].trim();
             let prefix = `{{${p}}}`;
 
             data = data.replace(prefix , value);
@@ -652,4 +657,5 @@ export {
     , onloadRoutImportScript
     , onloadRoutExecultScript
     , addCache 
-    , execultCache };
+    , execultCache
+    , formatarLink };
