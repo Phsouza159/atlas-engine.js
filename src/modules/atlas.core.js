@@ -12,10 +12,13 @@ let vars = function (ob, self) {
     self.urlName    = ob.hasOwnProperty('urlName') ? (Array.isArray(ob.urlName) ? ob.urlName : ['index']) : ['index'];
 
     self.master     = ob.hasOwnProperty('master')   ? ob.master     : null;
-    self.master.url = formatarLink( self , self.master.url);
+    if(master != null)
+        self.master.url = formatarLink( self , self.master.url);
 
     let modulesJson = ob.hasOwnProperty('modulesJson') ? ob.modulesJson : null;
-    self.modulesJson= formatarLink( self , modulesJson);
+    if(modulesJson != null)
+        self.modulesJson= formatarLink( self , modulesJson);
+    
     self.dataModules = new Set();
 
     self = formatarRotas(self , ob);
@@ -375,7 +378,15 @@ let loadModules = async function (self) {
     self.logView('atlas load modules init.');
 
     await modules
-        .then((data) => data.json())
+        .then((data) => {
+            
+            if(data.status != 200)
+            {
+                throw `erro ao carregar modulo :: ${data.statusText}`;
+            }
+
+           return data.json();
+        })
         .then((data) => {
 
             let urlBase = data.urlPathModule;
