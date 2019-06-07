@@ -434,6 +434,7 @@ let loadLinks = function (self) {
         }
         linkcChild.type = 'text/css';
         linkcChild.href = `${link}`;
+        linkcChild.dataset.insertatlas = 'ok';
 
         head.appendChild(linkcChild);
 
@@ -456,9 +457,9 @@ let loadScripts = function (self) {
     self.scripts.map(script => {
         let scriptChid = document.createElement('script');
         scriptChid.src = `${script}`;
+        scriptChid.dataset.insertatlas = 'ok';
 
         body.appendChild(scriptChid);
-
 
         let name = script.split('/');
         name = name[name.length - 1];

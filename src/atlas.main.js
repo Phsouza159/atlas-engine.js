@@ -126,17 +126,39 @@ import * as mod from './modules/atlas.mod';
     }
 
     let listObjetoDestruir = [
-        () => document.getElementById('style-atlas'),
-        () => document.getElementById('atlas-load-body'),
-    ]
+        (self) => document.getElementById('style-atlas'),
+        (self) => document.getElementById('atlas-load-body'),
+        (self) => [...document.querySelectorAll('[data-insertatlas]')],
+        (self) => document.getElementById(self.id), 
+        (self) => {
+            let names    = self.rout.map(e => e.name);
+            let elements = names.map(e => document.getElementById(`script-route-${e}`));
+            return elements;
+        }
+    ];
+
+    let removerElementoDOM = (e) => {
+        if(e != null && typeof e == 'object')
+        {
+            let parent = e.parentNode;
+
+            parent.removeChild(e);
+        }
+    }
 
     AtlasApp.prototype.destroir = () => {
+        let self =  globalThis.AtlasApp;
+        
         listObjetoDestruir.map( item => {
-            let e = item();
-            if(e != null){
-               let parent = e.parentNode;
-                
-               parent.removeChild(e);
+            let e = item(self);
+
+            if(e != null && !Array.isArray(e) ){
+                removerElementoDOM(e);
+            }
+            else if( Array.isArray(e)){
+                e.map( i => {
+                    removerElementoDOM(i);
+                });
             }
         });
     }
