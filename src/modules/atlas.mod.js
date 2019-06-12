@@ -1,4 +1,16 @@
+let iF = (value , element) => {
+    let self = globalThis.AtlasApp;
+    let arg = value;
+    let vdd = self.sys.queryParametres.text(`{{${arg}}}`);
 
+    if (vdd) {
+        element.hidden = false;
+    }
+    else {
+        element.hidden = true;
+        element.innerHTML = null;
+    }
+}
 
 let setForm = function (value, element) {
     let self = globalThis.AtlasApp;
@@ -51,7 +63,9 @@ let sendForm = async function (url, data, method = 'post') {
     let self = globalThis.AtlasApp;
     let response;
 
-    response = await self.sys.OnPost(url, data)
+    let urlFormat = self.core.formatarLink(self , url);
+
+    response = await self.sys.OnPost(urlFormat, data)
         .then((data) => {
             return data;
         })
@@ -256,4 +270,5 @@ export {
     , cacheForm
     , setForm
     , get
+    , iF
 };

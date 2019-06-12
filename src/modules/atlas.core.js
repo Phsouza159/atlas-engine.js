@@ -6,6 +6,8 @@ import { eLogs } from "../enum/atlas.enum";
  */
 let vars = function (ob, self) {
 
+    self.securyte   = ob.securyte;
+    self.name       = ob.name;
     self.root       = ob.hasOwnProperty('root')     ? ob.root       : window.location.href;
     self.id         = ob.hasOwnProperty('id')       ? ob.id         : '#load-html';
     self.index      = ob.hasOwnProperty('index')    ? ob.index      : 'index';
@@ -34,12 +36,17 @@ let vars = function (ob, self) {
 };
 /**
  * formatar links com ./ para raiz root 
- * @param {object} self 
- * @param {string} link 
+ * @param {object} self : objeto atlas
+ * @param {string} link : url que se queira validar
  */
 let formatarLink = ( self , link ) => {
+   
     if(link.includes('./')){
         return link.replace( './' , self.root);
+    }
+    else if(link[0] == '/'){
+        link[0] = " ";
+        return self.root + link.trim(); 
     }
 
     return link;
@@ -267,7 +274,7 @@ let setRoutView = function (rout, callBack = null) {
     if (rout.title != null)
         title.innerHTML = rout.title;
 
-    element.innerHTML = rout.data;
+    element = setInnerHtmlRout(element , rout.data) ;
 
     window.history.pushState("object or string", rout.title, `${rout.path}${urlParamtres}`);
 
@@ -286,6 +293,20 @@ let setRoutView = function (rout, callBack = null) {
     self.core.onloadRoutExecultScript(self);
     //self.core.execultCache(self);
 }
+/**
+ * @param {object} element : element principal Atlas {master | id-insert} 
+ * @param {string} data : html a ser inserido; 
+ */
+let setInnerHtmlRout = ( element , data ) => {
+    try{
+        element.innerHTML = data;
+    }catch(e) {
+        console.log(e);
+    }
+
+    return element;
+}
+
 /**
  * gerar script do objeto route no body caso ele não exista
  * @param {object} route 
@@ -608,6 +629,7 @@ let loadMaster = async function(self) {
     let data = await self.sys.OnGet(self.master.url);
 
     e.innerHTML = data;
+    self.sys.apiQuery();
 
     return self;
 }
@@ -639,6 +661,70 @@ let execultCache = function( self ) {
     return self;
 }
 
+let verificarLoadImagem = (data , e) => {
+    console.warn(`Carregando imagem :: ${e.src} `);
+
+    return verificarSrcImagem(e);
+}
+
+
+let verificarSrcImagem = (element) => {
+    let self = globalThis.AtlasApp;
+    let src = element.attributes.src.value;
+ 
+    element.onerror = (data) => console.warn(data);
+    element.src = formatarLink( self , src);
+}
+
+let validarSerachParametres = (url) => {
+    if(url[0] == '?')
+    {
+        return url.substr(1).trim();
+    }
+    return url.trim();
+}
+
+let searchUrlParametres = () => {
+    let arr = [];
+    let urlParamtres = validarSerachParametres(window.location.search);
+    let pts = urlParamtres.split('&').filter(e => e);
+
+    if(pts.length <= 1)
+        return arr;
+
+    pts.map( p => {
+        let args = p.split('=');
+        let name = args[0];
+        let value = args[1];
+
+        arr[name] = value;
+    })
+
+    return arr;
+}
+
+let gerarSearchUrlParametres = (arr , limparSearcUrl = false) => {
+    let cacheUrl = window.location.search;
+    let paramentro = limparSearcUrl ? '?' : `${cacheUrl}&`;
+    let title = document.getElementsByTagName('title')[0].innerText;
+    let path = window.location.pathname;
+    let origin = window.location.origin;
+
+    let keys = Object.keys(arr);
+
+    keys.map( key => {
+        let value = arr[key];
+        let arg = `${key}=${value}&`;
+
+        paramentro += arg;
+    })
+
+    paramentro.substr('' , paramentro.length-1);
+    window.history.pushState("object or string", title, `${origin}${path}${paramentro}`);
+}
+
+
+
 export { 
     loadModules 
     , setRoutView 
@@ -659,4 +745,7 @@ export {
     , onloadRoutExecultScript
     , addCache 
     , execultCache
-    , formatarLink };
+    , formatarLink 
+    , verificarLoadImagem
+    , gerarSearchUrlParametres
+    , searchUrlParametres};

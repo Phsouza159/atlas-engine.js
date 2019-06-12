@@ -10,7 +10,7 @@
 
 "use strict";
 
-import { start } from './atlas.natives';
+import * as natives from './atlas.natives';
 import { eLogs, eHttoRequest } from './enum/atlas.enum';
 import * as core from './modules/atlas.core';
 import * as sys from './modules/atlas.sys';
@@ -163,7 +163,11 @@ import * as mod from './modules/atlas.mod';
         });
     }
 
-    AtlasApp.prototype.start                    = start;
+    AtlasApp.prototype.start                    = natives.start;
+    AtlasApp.prototype.securyteConfig           = natives.securyteConfig;
+    AtlasApp.prototype.securytEncrypt           = natives.securytEncrypt;
+    AtlasApp.prototype.securyteDecrypt          = natives.securyteDecrypt;
+
     AtlasApp.prototype.mod                      = {};
     AtlasApp.prototype.mod.for                  = mod.lacoFor;
     AtlasApp.prototype.mod.form                 = mod.form;
@@ -172,6 +176,7 @@ import * as mod from './modules/atlas.mod';
     AtlasApp.prototype.mod.sendJson             = mod.sendJson;
     AtlasApp.prototype.mod.dataSendJson         = mod.dataSendJson;
     AtlasApp.prototype.mod.get                  = mod.get;
+    AtlasApp.prototype.mod.if                   = mod.iF;
 
     AtlasApp.prototype.core                     = function() {this.init = {}};
     AtlasApp.prototype.core.vars                = core.vars;
@@ -195,6 +200,9 @@ import * as mod from './modules/atlas.mod';
     AtlasApp.prototype.core.addCache            = core.addCache;
     AtlasApp.prototype.core.execultCache        = core.execultCache;
     AtlasApp.prototype.core.formatarLink        = core.formatarLink;
+    AtlasApp.prototype.core.verificarLoadImagem = core.verificarLoadImagem;
+    AtlasApp.prototype.core.gerarSearchUrlParametres = core.gerarSearchUrlParametres; 
+    AtlasApp.prototype.core.searchUrlParametres = core.searchUrlParametres;
 
     AtlasApp.prototype.sys                      = function() {};
     AtlasApp.prototype.sys.cache                = [];

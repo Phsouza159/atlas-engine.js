@@ -9,10 +9,13 @@ let apiQuery = function () {
     let natives = [
         { name: '[data-route]',   dataset: 'route',     method: 'core.setRoutView.{data}',    type: 'onclick' },
         { name: '[data-for]',     dataset: 'for',       method: 'mod.for.{data}',             type: 'onload' , runat : 'ignore' },
+        { name: '[data-if]',      dataset: 'if',        method: 'mod.if.{data}',              type: 'onload' , runat : 'ignore' },
         { name: '[data-setForm]', dataset: 'setform',   method: 'mod.setForm.{data}',         type: 'onload' , runat : 'ignore' },
-        { name: '[data-form]',    dataset: 'form',      method: 'mod.form.{data}' ,           type: 'onclick' },
-        { name: '[data-view]',    dataset: 'view',      method: 'core.getPartial.{data}',     type: 'onload' },
-        { name: '[data-get]',     dataset: 'get',       method: 'mod.get.{data}',             type: 'onload' },
+        { name: '[data-form]',    dataset: 'form',      method: 'mod.form.{data}' ,           type: 'onclick'   },
+        { name: '[data-view]',    dataset: 'view',      method: 'core.getPartial.{data}',     type: 'onload'    },
+        { name: '[data-get]',     dataset: 'get',       method: 'mod.get.{data}',             type: 'onload'    },
+        { name: '[data-if]',      dataset: 'if',        method: 'mod.if.{data}',              type: 'onload' , runat : 'ignore' },
+        { name: 'img',            dataset: '',          method: 'core.verificarLoadImagem.{data}', type: 'onerror', runat : 'ignore' },
     ];
 
     let args = [...natives, ...modules]
@@ -88,6 +91,8 @@ let OnGet = async function (url) {
  * @param {objec} objec
  */
 let OnPost = function (url, objec) {
+    let self = globalThis.AtlasApp;
+    let ob = self.securytEncrypt(objec);
 
     var post = new Promise((resolve, reject) => {
 
@@ -96,14 +101,15 @@ let OnPost = function (url, objec) {
         ajax.open(eHttoRequest.post, url, true);
         ajax.setRequestHeader('Content-type', 'application/json'); //x-www-form-urlencoded
 
-        ajax.send(JSON.stringify({ data : objec }));
+        ajax.send(JSON.stringify({ data : ob }));
 
         ajax.onreadystatechange = function () {
 
             if (ajax.readyState == 4 && ajax.status == 200) {
                 var data = ajax.responseText;
-
-                resolve(data);
+                
+                let response = self.securyteDecrypt(data);
+                resolve(response);
             }
             else if (ajax.readyState == 4) {
                 reject(ajax.status);
